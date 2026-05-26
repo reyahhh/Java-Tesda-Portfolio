@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+
+    .wallet-card {
+        @apply bg-gradient-to-r from-gbank-dark via-gbank-blue to-gbank-teal
+        rounded-2xl p-6 text-white shadow-xl;
+    }
+
+    .btn-primary {
+        @apply bg-gbank-blue hover:bg-gbank-dark text-white font-semibold
+        py-2 px-6 rounded-lg transition-colors duration-200 cursor-pointer
+        disabled:opacity-50 disabled:cursor-not-allowed;
+    }
+
+    .btn-secondary {
+        @apply border border-gbank-blue text-gbank-blue hover:bg-gbank-soft
+        font-semibold py-2 px-6 rounded-lg transition-colors duration-200 cursor-pointer
+        dark:border-gbank-teal dark:text-gbank-teal dark:hover:bg-gray-800;
+    }
+
+    .quick-action {
+        @apply flex flex-col items-center justify-center gap-2 bg-white
+        rounded-xl p-4 shadow-sm hover:shadow-md hover:bg-gbank-soft
+        transition-all duration-200 cursor-pointer border border-gray-100
+        dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700;
+    }
+
+    .form-input {
+        @apply w-full border-2 border-gray-200 rounded-lg px-4 py-2.5
+        focus:outline-none focus:border-gbank-blue focus:ring-2 focus:ring-gbank-blue/20
+        text-gray-800 bg-white transition-all duration-200;
+    }
+
+    .form-input:disabled {
+        @apply bg-gray-50 text-gray-400 cursor-not-allowed;
+    }
+
+    .dark .form-input {
+        @apply bg-gray-700 border-gray-600 text-gray-100 
+        focus:border-gbank-teal focus:ring-gbank-teal/20;
+    }
+
+    .dark .form-input:disabled {
+        @apply bg-gray-800 text-gray-500;
+    }
+
+    .form-error {
+        @apply text-red-500 text-sm mt-1 font-medium;
+    }
+
+    .dark .form-error {
+        @apply text-red-400;
+    }
+
+    .badge-send    { @apply bg-blue-100 text-blue-700 text-xs font-medium px-2 py-1 rounded-full; }
+    .badge-receive { @apply bg-green-100 text-green-700 text-xs font-medium px-2 py-1 rounded-full; }
+    .badge-bill    { @apply bg-orange-100 text-orange-700 text-xs font-medium px-2 py-1 rounded-full; }
+    .badge-load    { @apply bg-purple-100 text-purple-700 text-xs font-medium px-2 py-1 rounded-full; }
+    .badge-cashin  { @apply bg-teal-100 text-teal-700 text-xs font-medium px-2 py-1 rounded-full; }
+
+    .dark .badge-send    { @apply bg-blue-900/30 text-blue-300; }
+    .dark .badge-receive { @apply bg-green-900/30 text-green-300; }
+    .dark .badge-bill    { @apply bg-orange-900/30 text-orange-300; }
+    .dark .badge-load    { @apply bg-purple-900/30 text-purple-300; }
+    .dark .badge-cashin  { @apply bg-teal-900/30 text-teal-300; }
+
+    .sidebar-link {
+        @apply flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700
+        hover:bg-gbank-soft hover:text-gbank-blue transition-all duration-150 cursor-pointer;
+    }
+
+    .sidebar-link.active {
+        @apply bg-gbank-soft text-gbank-blue font-semibold;
+    }
+
+    .dark .sidebar-link {
+        @apply text-gray-300 hover:bg-gray-700/50 hover:text-gbank-teal;
+    }
+
+    .dark .sidebar-link.active {
+        @apply bg-gray-700 text-gbank-teal font-semibold;
+    }
+
+    .stats-card {
+        @apply bg-white rounded-xl p-5 shadow-sm border border-gray-100
+        flex flex-col gap-1 transition-colors duration-200;
+    }
+
+    .dark .stats-card {
+        @apply bg-gray-800 border-gray-700 text-gray-100;
+    }
+
+    /* Table styling */
+    table {
+        @apply w-full text-sm;
+    }
+
+    tbody tr {
+        @apply hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors;
+    }
+
+    thead {
+        @apply bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300;
+    }
+
+    th {
+        @apply font-semibold text-left px-4 py-3;
+    }
+
+    td {
+        @apply px-4 py-3;
+    }
+
+    /* Alert styling with dark mode */
+    .bg-green-50 {
+        @apply dark:bg-green-900/20 dark:border-green-800 dark:text-green-300;
+    }
+
+    .bg-red-50 {
+        @apply dark:bg-red-900/20 dark:border-red-800 dark:text-red-300;
+    }
+
+    .bg-blue-50 {
+        @apply dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300;
+    }
+
+    /* Link styling */
+    a:not([class*="btn"]):not([class*="sidebar"]) {
+        @apply text-gbank-blue hover:text-gbank-dark dark:text-gbank-teal dark:hover:text-blue-400 transition-colors;
+    }
+}

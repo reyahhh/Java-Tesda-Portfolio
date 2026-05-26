@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title th:text="${pageTitle} + ' | GBank'">Create Account | GBank</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body class="min-h-screen bg-gray-50 font-sans text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+<div th:replace="~{layout/base :: navbar}"></div>
+<div class="flex min-h-screen pt-20">
+  <aside th:replace="~{layout/base :: sidebar}"></aside>
+  <main class="min-w-0 flex-1 p-6 flex items-start justify-center">
+    <div class="w-full max-w-2xl rounded-2xl border border-gray-100 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold">Create New Account</h2>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Create a new customer or admin account.</p>
+      </div>
+
+      <div th:if="${success}" class="mb-6 rounded-lg border border-green-300 bg-green-50 p-3 text-sm text-green-800">
+        ✅ <span th:text="${success}"></span>
+      </div>
+
+      <form th:action="@{/admin/users/new}" method="post" th:object="${createUserRequest}" class="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <div class="md:col-span-2">
+          <label class="mb-1 block text-sm font-medium">Full Name</label>
+          <input type="text" th:field="*{fullName}" class="form-input" placeholder="Juan dela Cruz"/>
+          <p th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="form-error"></p>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium">Mobile Number</label>
+          <input type="text" th:field="*{mobileNumber}" class="form-input" placeholder="09XXXXXXXXX" maxlength="11"/>
+          <p th:if="${#fields.hasErrors('mobileNumber')}" th:errors="*{mobileNumber}" class="form-error"></p>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium">Role</label>
+          <select th:field="*{role}" class="form-input">
+            <option value="">— Select Role —</option>
+            <option th:each="role : ${roles}" th:value="${role}" th:text="${role.name().replace('ROLE_','')}">USER</option>
+          </select>
+          <p th:if="${#fields.hasErrors('role')}" th:errors="*{role}" class="form-error"></p>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium">Email</label>
+          <input type="email" th:field="*{email}" class="form-input" placeholder="juan@example.com"/>
+          <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="form-error"></p>
+        </div>
+
+        <div>
+          <label class="mb-1 block text-sm font-medium">Password</label>
+          <input type="password" th:field="*{password}" class="form-input" placeholder="Min 8 characters"/>
+          <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="form-error"></p>
+        </div>
+
+        <div class="md:col-span-2 mt-2 flex gap-3">
+          <button type="submit" class="btn-primary flex-1">Create Account</button>
+          <a th:href="@{/admin}" class="btn-secondary flex-1 text-center">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' | GBank'">Pay Bills | GBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"/>
+</head>
+<body class="bg-gray-50 font-sans">
+<div th:replace="~{layout/base :: navbar}"></div>
+<div class="flex min-h-screen">
+    <div th:replace="~{layout/base :: sidebar}"></div>
+    <main class="flex-1 p-8 flex items-start justify-center">
+        <div class="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+
+            <h2 class="text-2xl font-bold text-gcash-dark mb-2">🧾 Pay Bills</h2>
+            <p class="text-gray-500 text-sm mb-6">Pay your utility bills and government fees.</p>
+
+            <form th:action="@{/bills}" method="post"
+                  th:object="${billPaymentRequest}" class="flex flex-col gap-5">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Biller</label>
+                    <select th:field="*{billerName}" class="form-input">
+                        <option value="">— Select Biller —</option>
+                        <option th:each="biller : ${billers}"
+                                th:value="${biller}"
+                                th:text="${biller}">Meralco</option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('billerName')}"
+                       th:errors="*{billerName}" class="form-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Account / Reference Number
+                    </label>
+                    <input type="text" th:field="*{accountNumber}"
+                           placeholder="Enter your billing account number" class="form-input"/>
+                    <p th:if="${#fields.hasErrors('accountNumber')}"
+                       th:errors="*{accountNumber}" class="form-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Amount (₱)</label>
+                    <input type="number" th:field="*{amount}" step="0.01"
+                           placeholder="0.00" class="form-input"/>
+                    <p th:if="${#fields.hasErrors('amount')}"
+                       th:errors="*{amount}" class="form-error"></p>
+                </div>
+
+                <div class="flex gap-3 mt-2">
+                    <button type="submit" class="btn-primary flex-1">Pay Now</button>
+                    <a th:href="@{/dashboard}" class="btn-secondary flex-1 text-center">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

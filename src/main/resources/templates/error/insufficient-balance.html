@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Error | GBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"/>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen flex items-center justify-center">
+
+<div class="bg-white rounded-2xl shadow-xl p-10 max-w-md text-center">
+    <div class="text-6xl mb-4">⚠️</div>
+    <h1 class="text-2xl font-bold text-red-600 mb-2">Transaction Failed</h1>
+    <p class="text-gray-500 mb-6" th:text="${errorMessage}">
+        An error occurred. Please try again.
+    </p>
+    <a th:href="@{/dashboard}" class="btn-primary inline-block">
+        ← Back to Dashboard
+    </a>
+</div>
+
+</body>
+</html>

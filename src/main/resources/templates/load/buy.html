@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' | GBank'">Buy Load | GBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"/>
+</head>
+<body class="bg-gray-50 font-sans">
+<div th:replace="~{layout/base :: navbar}"></div>
+<div class="flex min-h-screen">
+    <div th:replace="~{layout/base :: sidebar}"></div>
+    <main class="flex-1 p-8 flex items-start justify-center">
+        <div class="w-full max-w-lg bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+
+            <h2 class="text-2xl font-bold text-gcash-dark mb-2">📱 Buy Load</h2>
+            <p class="text-gray-500 text-sm mb-6">Reload any Philippine mobile number instantly.</p>
+
+            <form th:action="@{/load}" method="post"
+                  th:object="${loadPurchaseRequest}" class="flex flex-col gap-5">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Target Mobile Number
+                    </label>
+                    <input type="text" th:field="*{targetMobileNumber}"
+                           placeholder="09XXXXXXXXX" class="form-input" maxlength="11"/>
+                    <p th:if="${#fields.hasErrors('targetMobileNumber')}"
+                       th:errors="*{targetMobileNumber}" class="form-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Network</label>
+                    <select th:field="*{network}" class="form-input">
+                        <option value="">— Select Network —</option>
+                        <option th:each="net : ${networks}"
+                                th:value="${net}"
+                                th:text="${net}">Globe</option>
+                    </select>
+                    <p th:if="${#fields.hasErrors('network')}"
+                       th:errors="*{network}" class="form-error"></p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Amount (₱5 – ₱1,000)
+                    </label>
+                    <!-- Quick amount buttons -->
+                    <div class="grid grid-cols-4 gap-2 mb-2">
+                        <button type="button" onclick="setAmount(10)"
+                                class="border border-gcash-blue text-gcash-blue text-xs py-1 rounded-lg hover:bg-gcash-soft">
+                            ₱10
+                        </button>
+                        <button type="button" onclick="setAmount(50)"
+                                class="border border-gcash-blue text-gcash-blue text-xs py-1 rounded-lg hover:bg-gcash-soft">
+                            ₱50
+                        </button>
+                        <button type="button" onclick="setAmount(100)"
+                                class="border border-gcash-blue text-gcash-blue text-xs py-1 rounded-lg hover:bg-gcash-soft">
+                            ₱100
+                        </button>
+                        <button type="button" onclick="setAmount(300)"
+                                class="border border-gcash-blue text-gcash-blue text-xs py-1 rounded-lg hover:bg-gcash-soft">
+                            ₱300
+                        </button>
+                    </div>
+                    <input type="number" th:field="*{amount}" id="loadAmount"
+                           step="0.01" placeholder="0.00" class="form-input"/>
+                    <p th:if="${#fields.hasErrors('amount')}"
+                       th:errors="*{amount}" class="form-error"></p>
+                </div>
+
+                <div class="flex gap-3 mt-2">
+                    <button type="submit" class="btn-primary flex-1">Buy Load</button>
+                    <a th:href="@{/dashboard}" class="btn-secondary flex-1 text-center">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+<script>
+    function setAmount(val) {
+        document.getElementById('loadAmount').value = val;
+    }
+</script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

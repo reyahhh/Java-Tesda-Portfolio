@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' | GBank'">Admin | GBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"/>
+</head>
+<body class="bg-gray-50 font-sans">
+<div th:replace="~{layout/base :: navbar}"></div>
+<div class="flex min-h-screen">
+    <div th:replace="~{layout/base :: sidebar}"></div>
+    <main class="flex-1 p-8">
+
+        <h2 class="text-2xl font-bold text-gcash-dark mb-6">⚙️ Admin Dashboard</h2>
+        <div class="flex gap-3 my-4">
+            <a th:href="@{/admin/users/new}" class="btn-primary text-sm flex items-center gap-2">
+                <span class="icon-[lucide--user-plus] h-4 w-4"></span>
+                Create User
+            </a>
+        </div>
+        <!-- Flash -->
+        <div th:if="${success}"
+             class="bg-green-50 border border-green-300 text-green-800 rounded-lg p-3 mb-6 text-sm">
+            ✅ <span th:text="${success}"></span>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
+            <div class="stats-card">
+                <p class="text-gray-400 text-xs uppercase tracking-wide">Total Users</p>
+                <p class="text-3xl font-bold text-gcash-dark" th:text="${totalUsers}">0</p>
+            </div>
+            <div class="stats-card">
+                <p class="text-gray-400 text-xs uppercase tracking-wide">Total Transactions</p>
+                <p class="text-3xl font-bold text-gcash-dark" th:text="${totalTransactions}">0</p>
+            </div>
+            <div class="stats-card">
+                <p class="text-gray-400 text-xs uppercase tracking-wide">Total Wallet Balance</p>
+                <p class="text-3xl font-bold text-gcash-blue"
+                   th:text="'₱' + ${#numbers.formatDecimal(totalBalance, 1, 2)}">₱0.00</p>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <h3 class="text-lg font-semibold text-gray-700 mb-3">All Users</h3>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 mb-10">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50 text-gray-500 text-left">
+                <tr>
+                    <th class="px-4 py-3 font-medium">Name</th>
+                    <th class="px-4 py-3 font-medium">Mobile</th>
+                    <th class="px-4 py-3 font-medium">Email</th>
+                    <th class="px-4 py-3 font-medium">Role</th>
+                    <th class="px-4 py-3 font-medium text-right">Balance</th>
+                    <th class="px-4 py-3 font-medium">Status</th>
+                    <th class="px-4 py-3 font-medium" colspan="2">Action</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                <tr th:each="u : ${users}" class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-medium text-gray-800" th:text="${u.fullName}">—</td>
+                    <td class="px-4 py-3 text-gray-500" th:text="${u.mobileNumber}">—</td>
+                    <td class="px-4 py-3 text-gray-500" th:text="${u.email}">—</td>
+                    <td class="px-4 py-3 text-xs font-medium text-gcash-blue"
+                        th:text="${u.role.name().replace('ROLE_','')}">USER</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gcash-dark"
+                        th:text="'₱' + ${#numbers.formatDecimal(u.balance, 1, 2)}">₱0.00</td>
+                    <td class="px-4 py-3">
+                            <span th:classappend="${u.enabled} ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                                  class="text-xs px-2 py-0.5 rounded-full"
+                                  th:text="${u.enabled} ? 'Active' : 'Disabled'">Active</span>
+                    </td>
+                    <td class="px-4 py-3">
+                        <form th:action="@{'/admin/users/' + ${u.id} + '/toggle'}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+                            <button type="submit"
+                                    class="text-xs text-gcash-blue hover:underline font-medium"
+                                    th:text="${u.enabled} ? 'Disable' : 'Enable'">Toggle</button>
+                        </form>
+                        
+                    </td>
+                    <td class="px-4 py-3">
+                        <a th:href="@{'/admin/users/' + ${u.id}}"
+                           class="text-gbank-blue hover:underline font-medium mr-3 flex items-center gap-1">
+                            <span class="icon-[lucide--eye] h-4 w-4"></span>
+                            View
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Audit Logs -->
+        <h3 class="text-lg font-semibold text-gray-700 mb-3">Recent Audit Logs</h3>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <div th:if="${#lists.isEmpty(auditLogs)}"
+                 class="p-6 text-center text-gray-400 text-sm">No audit logs yet.</div>
+            <table th:unless="${#lists.isEmpty(auditLogs)}" class="w-full text-sm">
+                <thead class="bg-gray-50 text-gray-500 text-left">
+                <tr>
+                    <th class="px-4 py-3 font-medium">Actor</th>
+                    <th class="px-4 py-3 font-medium">Action</th>
+                    <th class="px-4 py-3 font-medium">Details</th>
+                    <th class="px-4 py-3 font-medium">Time</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                <tr th:each="log : ${auditLogs}" class="hover:bg-gray-50">
+                    <td class="px-4 py-3 text-gray-600" th:text="${log.actorEmail}">—</td>
+                    <td class="px-4 py-3 font-medium text-gcash-blue" th:text="${log.action}">—</td>
+                    <td class="px-4 py-3 text-gray-400 text-xs" th:text="${log.details}">—</td>
+                    <td class="px-4 py-3 text-gray-400 text-xs"
+                        th:text="${#temporals.format(log.performedAt, 'MMM dd HH:mm')}">—</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

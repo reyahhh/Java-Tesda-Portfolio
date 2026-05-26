@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' | GBank'">GBank</title>
+
+    <script>
+        (function () {
+            const theme = localStorage.getItem('theme');
+            const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            if (theme === 'dark' || (!theme && darkQuery.matches)) {
+                document.documentElement.classList.add('dark');
+            } else if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+
+    <!-- Tailwind CSS v3.4.1 LTS output -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+    <style>
+        #theme-toggle {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23374151' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            padding-right: 1.75rem;
+            cursor: pointer;
+        }
+
+        .dark #theme-toggle {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d1d5db' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        }
+
+        #theme-toggle option {
+            background: white;
+            color: #374151;
+            padding: 0.5rem;
+        }
+
+        .dark #theme-toggle option {
+            background: #1f2937;
+            color: #d1d5db;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 font-sans transition-colors duration-300">
+
+<!-- Navbar Fragment -->
+<nav th:fragment="navbar" class="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <!-- Logo -->
+        <a th:href="@{/dashboard}" class="flex items-center gap-2">
+            <span class="text-2xl">💙</span>
+            <span class="text-xl font-bold text-gcash-blue dark:text-white">GBank</span>
+        </a>
+
+        <!-- Right Section -->
+        <div class="flex items-center gap-6">
+            <!-- Theme Toggle Dropdown -->
+<!--            <select id="theme-toggle" class="px-3 py-2 border-none appearance-none bg-none bg-transparent text-gray-700 dark:text-gray-200 rounded-lg focus:outline-none focus:ring-0" onchange="setTheme(this.value)" title="Toggle theme">-->
+<!--                <option value="light">☀️ Light</option>-->
+<!--                <option value="dark">🌙 Dark</option>-->
+<!--                <option value="system">💻 System</option>-->
+<!--            </select>-->
+
+            <!-- User Info -->
+            <div class="flex items-center gap-3 pl-6 border-l border-gray-200 dark:border-gray-700">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-medium text-gray-700 dark:text-gray-200" sec:authentication="name"></p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Account</p>
+                </div>
+                <form th:action="@{/auth/logout}" method="post" class="inline">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 dark:from-blue-500 dark:to-blue-600 dark:hover:from-blue-600 dark:hover:to-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100" title="Logout">
+                        <span class="icon-[lucide--icon-log-out] h-4 w-4 my-2"></span>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Layout: Sidebar + Main Content -->
+<div class="flex min-h-screen" th:fragment="sidebar">
+    <!-- Sidebar Fragment -->
+    <aside class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm">
+        <nav sec:authorize="hasRole('USER')" class="flex flex-col gap-1 p-6">
+            <a th:href="@{/dashboard}" class="sidebar-link">
+                <span class="text-lg">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/transactions}" class="sidebar-link">
+                <span class="text-lg">📋</span>
+                <span>Transactions</span>
+            </a>
+            <a th:href="@{/transactions/send}" class="sidebar-link">
+                <span class="text-lg">📤</span>
+                <span>Send Money</span>
+            </a>
+            <a th:href="@{/bills}" class="sidebar-link">
+                <span class="text-lg">📄</span>
+                <span>Pay Bills</span>
+            </a>
+            <a th:href="@{/load}" class="sidebar-link">
+                <span class="text-lg">📱</span>
+                <span>Buy Load</span>
+            </a>
+            <a th:href="@{/profile}" class="sidebar-link">
+                <span class="text-lg">👤</span>
+                <span>Profile</span>
+            </a>
+        </nav>
+
+        <!--ADMIN-->
+        <nav sec:authorize="hasRole('ADMIN')" class="flex flex-col gap-1 p-6">
+            <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')" class="sidebar-link">
+                <span class="text-lg">⚙️</span>
+                <span>Admin Panel</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content Fragment -->
+    <main th:fragment="content" class="flex-1">
+        <!-- Page content inserted here -->
+    </main>
+</div>
+
+<script th:src="@{/js/theme.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

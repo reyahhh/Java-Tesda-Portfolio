@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle} + ' | GBank'">Transactions | GBank</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          rel="stylesheet"/>
+</head>
+<body class="bg-gray-50 font-sans">
+<div th:replace="~{layout/base :: navbar}"></div>
+<div class="flex min-h-screen">
+    <div th:replace="~{layout/base :: sidebar}"></div>
+    <main class="flex-1 p-8">
+
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gcash-dark">Transaction History</h2>
+            <a th:href="@{/transactions/send}" class="btn-primary text-sm">+ Send Money</a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+            <div th:if="${#lists.isEmpty(transactions)}"
+                 class="p-10 text-center text-gray-400">
+                No transactions found.
+            </div>
+            <table th:unless="${#lists.isEmpty(transactions)}" class="w-full text-sm">
+                <thead class="bg-gray-50 text-gray-500 text-left">
+                <tr>
+                    <th class="px-4 py-3 font-medium">Ref #</th>
+                    <th class="px-4 py-3 font-medium">Type</th>
+                    <th class="px-4 py-3 font-medium">From / To</th>
+                    <th class="px-4 py-3 font-medium">Description</th>
+                    <th class="px-4 py-3 font-medium text-right">Amount</th>
+                    <th class="px-4 py-3 font-medium">Status</th>
+                    <th class="px-4 py-3 font-medium">Date</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                <tr th:each="tx : ${transactions}" class="hover:bg-gray-50">
+                    <td class="px-4 py-3 font-mono text-xs text-gray-400"
+                        th:text="${tx.referenceNumber}">GC-XXXXXXXX</td>
+                    <td class="px-4 py-3">
+                            <span th:switch="${tx.type.name()}">
+                                <span th:case="'SEND'"         class="badge-send">Send</span>
+                                <span th:case="'RECEIVE'"      class="badge-receive">Receive</span>
+                                <span th:case="'BILL_PAYMENT'" class="badge-bill">Bill</span>
+                                <span th:case="'LOAD_PURCHASE'" class="badge-load">Load</span>
+                                <span th:case="'CASH_IN'"      class="badge-cashin">Cash In</span>
+                            </span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-600 text-xs">
+                        <div th:if="${tx.sender != null}"
+                             th:text="'From: ' + ${tx.sender.fullName}"></div>
+                        <div th:if="${tx.receiver != null}"
+                             th:text="'To: ' + ${tx.receiver.fullName}"></div>
+                    </td>
+                    <td class="px-4 py-3 text-gray-500"
+                        th:text="${tx.description ?: '—'}">—</td>
+                    <td class="px-4 py-3 text-right font-semibold"
+                        th:classappend="${tx.sender != null and tx.sender.id == currentUser.id}
+                                           ? 'text-red-500' : 'text-green-600'"
+                        th:text="'₱' + ${#numbers.formatDecimal(tx.amount, 1, 2)}">₱0.00</td>
+                    <td class="px-4 py-3">
+                            <span th:classappend="${tx.status.name() == 'SUCCESS'}
+                                                  ? 'text-green-600' : 'text-red-500'"
+                                  class="text-xs font-medium"
+                                  th:text="${tx.status}">SUCCESS</span>
+                    </td>
+                    <td class="px-4 py-3 text-gray-400 text-xs"
+                        th:text="${#temporals.format(tx.createdAt, 'MMM dd, yyyy HH:mm')}">—</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>
